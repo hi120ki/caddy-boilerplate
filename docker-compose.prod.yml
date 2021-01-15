@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  caddy:
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - $PWD/caddy/prod/Caddyfile:/etc/caddy/Caddyfile
+      - caddy:/data
+    env_file:
+      - ./env/caddy.env
+  nginx:
+    restart: always
+  apache:
+    restart: always
+
+volumes:
+  caddy:

@@ -1,0 +1,38 @@
+(default_options) {
+  header -Server
+  log {
+    output stdout
+    format json
+  }
+}
+
+(proxy_options) {
+  header_up X-Real-IP {remote_host}
+  header_up X-Forwarded-For {remote_host}
+  header_up X-Forwarded-Proto {scheme}
+}
+
+http://localhost {
+  import default_options
+
+  encode gzip
+
+  route /nginx/* {
+    uri strip_prefix /nginx
+    reverse_proxy http://nginx:80 {
+      import proxy_options
+    }
+  }
+
+  route /apache/* {
+    uri strip_prefix /apache
+    reverse_proxy http://apache:80 {
+      import proxy_options
+    }
+  }
+
+  route /* {
+    root * /usr/share/caddy
+    file_server
+  }
+}
